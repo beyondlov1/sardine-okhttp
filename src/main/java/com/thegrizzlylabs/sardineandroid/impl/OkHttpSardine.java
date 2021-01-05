@@ -67,6 +67,8 @@ public class OkHttpSardine implements Sardine {
 
     private OkHttpClient client;
 
+    private ThreadLocal<Response> responseThreadLocal = new ThreadLocal<>();
+
     public OkHttpSardine() {
         this.client = new OkHttpClient.Builder().build();
     }
@@ -625,7 +627,15 @@ public class OkHttpSardine implements Sardine {
 
     private <T> T execute(Request request, ResponseHandler<T> responseHandler) throws IOException {
         Response response = client.newCall(request).execute();
+        responseThreadLocal.set(response);
         return responseHandler.handleResponse(response);
     }
 
+
+    @Override
+    public void close(){
+        if (responseThreadLocal.get() != null){
+            responseThreadLocal.get().close();
+        }
+    }
 }

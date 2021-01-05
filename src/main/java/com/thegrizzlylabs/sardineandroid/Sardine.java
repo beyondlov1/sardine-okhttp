@@ -506,4 +506,5 @@ public interface Sardine
 	 */
 	void ignoreCookies();
 
+	void close();
 }

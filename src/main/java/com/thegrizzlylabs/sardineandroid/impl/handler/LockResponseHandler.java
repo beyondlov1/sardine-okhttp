@@ -21,10 +21,13 @@ public class LockResponseHandler extends ValidatingResponseHandler<String>
         validateResponse(response);
         ResponseBody body = response.body();
         if (body == null) {
+            response.close();
             throw new SardineException("No entity found in response", response.code(), response.message());
         }
 
-        return getToken(body.byteStream());
+        String token = getToken(body.byteStream());
+        response.close();
+        return token;
     }
 
     /**
